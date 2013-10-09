@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Filmstrip</title>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="/filmstrip.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var model = {src: '/elephants_dream_r1.ogv'};
+
+            // ----------------------------------------
+            // horizontal
+            // ----------------------------------------
+            window.fs0 = new Filmstrip(model, {orientation: 'horizontal', height: 80});
+            window.fs1 = new Filmstrip(model, {orientation: 'horizontal', height: 80});
+
+            fs0.on('loaded', function() {
+                this.resize(800);
+            });
+            fs0.on('redraw', function() {
+                $('#fs0').html(this.canvas);
+                fs1.setCanvas(this.canvas);
+                $('#fs1').html(fs1.canvas);
+            });
+
+            fs0.load();
+
+            // ----------------------------------------
+            // vertical
+            // ----------------------------------------
+            window.fs2 = new Filmstrip(model, {orientation: 'vertical', width: 100});
+            window.fs3 = new Filmstrip(model, {orientation: 'vertical', width: 100});
+
+            fs2.on('loaded', function() {
+                this.resize(800);
+            });
+            fs2.on('redraw', function() {
+                $('#fs2').html(this.canvas);
+                fs3.setCanvas(this.canvas);
+                $('#fs3').html(fs3.canvas);
+            });
+
+            fs2.load();
+
+        });
+    </script>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>fs0</th>
+            <td id="fs0"></td>
+        </tr>
+        <tr>
+            <th>fs1</th>
+            <td id="fs1"></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th>fs2</th>
+            <th>fs3</th>
+        </tr>
+        <tr>
+            <td id="fs2"></td>
+            <td id="fs3"></td>
+        </tr>
+    </table>
+</body>
+</html>

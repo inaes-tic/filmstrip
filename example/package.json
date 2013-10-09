@@ -1,0 +1,12 @@
+{
+  "name": "filmstrip.js",
+  "repository" : { 
+    "type" : "git", 
+    "url" : "https://github.com/inaes-tic/filmstrip.js.git"
+  },
+  "description": "HTML5 video preview",
+  "author": "Leonardo Vidarte <lvidarte@gmail.com>",
+  "dependencies" :{
+    "connect": "~2.9.0"
+  }
+}

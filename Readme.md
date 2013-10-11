@@ -32,22 +32,24 @@ filmstrip.resize(120, 800);
 ####Events
 
 ```javascript
+//video metadata loaded
 filmstrip.on('loaded', function() {
-    //video metadata loaded
 });
 
+//resize started
 filmstrip.on('draw:started', function() {
-    //resize started
 });
 
+//resize finished
 filmstrip.on('draw:finished', function() {
-    //resize finished
-    this.drawCanvas($('#filmstrip')); //draw all canvas
+    //draw all canvas
+    this.drawCanvas($('#filmstrip'));
 });
 
+//frame drawn
 filmstrip.on('draw:frame', function(event, args) {
-    //frame drawn
-    this.drawFrame($('#filmstrip'), args); //draw canvas frame by frame
+    //draw canvas frame by frame
+    this.drawFrame($('#filmstrip'), args);
 });
 ```
 ####Dependencies

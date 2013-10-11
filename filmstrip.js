@@ -43,7 +43,7 @@ var Filmstrip = function(model, args) {
         self.context = self.canvas.getContext('2d');
     }(this);
 
-    this.load = function(video) {
+    this.load = function() {
         var self = this;
         var video = $('<video preload="metadata" />')
             .attr('src', self.model.src)

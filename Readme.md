@@ -1,3 +1,11 @@
+Filmstrip.js: an HTML5 video preview widget that will rock your world
+
+This project is part of the Malbec Broadcast project that is moved and
+weaved by the OpCoode Cooperative http://opcode.coop
+
+This project like all the Malbec Broadcast projects is released under the 
+AGPL v3 Licence.
+
 ####Usage
 
 ```html

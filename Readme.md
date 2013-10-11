@@ -1,7 +1,7 @@
 ####Usage
 
 ```html
-   <canvas id="filmstrip"></canvas>
+<canvas id="filmstrip"></canvas>
 ```
 
 ```javascript
@@ -18,19 +18,36 @@ filmstrip = new Filmstrip(model, {
 });
 
 filmstrip.load();
+
+filmstrip.on('draw:finished', function() {
+    this.drawCanvas($('#filmstrip'));
+});
+```
+
+####Resize
+```javascript
+filmstrip.resize(120, 800);
 ```
 
 ####Events
 
 ```javascript
-// draw whole canvas on resized
-filmstrip.on('draw:finished', function() {
-    this.drawCanvas($('#filmstrip'));
+filmstrip.on('loaded, function() {
+    //video metadata loaded
 });
 
-// draw frame by frame on resize
-fsV.on('draw:frame', function(event, args) {
-    this.drawFrame($('#filmstrip'), args);
+filmstrip.on('draw:started', function() {
+    //resize started
+});
+
+filmstrip.on('draw:finished', function() {
+    //resize finished
+    this.drawCanvas($('#filmstrip')); //draw all canvas
+});
+
+filmstrip.on('draw:frame', function(event, args) {
+    //frame drawn
+    this.drawFrame($('#filmstrip'), args); //draw canvas frame by frame
 });
 ```
 ####Dependencies

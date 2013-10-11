@@ -32,7 +32,7 @@ filmstrip.resize(120, 800);
 ####Events
 
 ```javascript
-filmstrip.on('loaded, function() {
+filmstrip.on('loaded', function() {
     //video metadata loaded
 });
 

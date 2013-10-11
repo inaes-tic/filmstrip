@@ -1,5 +1,5 @@
 var connect = require('connect');
 connect.createServer(
     connect.static(__dirname)
-).listen(8080);
+).listen(8080, '0.0.0.0');
 console.log('go to http://localhost:8080/filmstrip.html')

@@ -3,70 +3,61 @@
 <head>
     <meta charset="utf-8">
     <title>Filmstrip</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <style type="text/css">
+        body {
+            background-color: #222;
+            margin: 20px;
+        }
+    </style>
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="/filmstrip.js"></script>
     <script>
         $(document).ready(function() {
 
             var model = {src: '/elephants_dream_r1.ogv'};
+            //var model = {src: '/sita.ogv'};
 
-            // ----------------------------------------
-            // horizontal
-            // ----------------------------------------
-            window.fs0 = new Filmstrip(model, {orientation: 'horizontal', height: 80});
-            window.fs1 = new Filmstrip(model, {orientation: 'horizontal', height: 80});
+            $('#fsV0').css({width: 120 + 'px', height: 600 + 'px'});
 
-            fs0.on('loaded', function() {
-                this.resize(800);
-            });
-            fs0.on('redraw', function() {
-                $('#fs0').html(this.canvas);
-                fs1.setCanvas(this.canvas);
-                $('#fs1').html(fs1.canvas);
-            });
-
-            fs0.load();
-
-            // ----------------------------------------
-            // vertical
-            // ----------------------------------------
-            window.fs2 = new Filmstrip(model, {orientation: 'vertical', width: 100});
-            window.fs3 = new Filmstrip(model, {orientation: 'vertical', width: 100});
-
-            fs2.on('loaded', function() {
-                this.resize(800);
-            });
-            fs2.on('redraw', function() {
-                $('#fs2').html(this.canvas);
-                fs3.setCanvas(this.canvas);
-                $('#fs3').html(fs3.canvas);
+            window.fsV = new Filmstrip(model, {
+                width: 120,
+                height: 600,
+                bgColor: '#333',
+                drawHoles: true,
+                holesColor: '#222',
+                holesDispersion: .7,
+                bandsPadding: 20,
+                autoOrientation: true,
+                strechOnResize: true,
             });
 
-            fs2.load();
+            fsV.load();
+
+            fsV.on('loaded', function() {
+                //this.resize(400);
+            });
+
+            fsV.on('draw:finished', function() {
+                this.drawCanvas($('#fsV0 > canvas'));
+            });
+
+            fsV.on('draw:frame', function(event, args) {
+                this.drawFrame($('#fsV0 > canvas'), args);
+            });
+
+            $('#fsV0').resizable({
+                resize: function(event, ui) {
+                    fsV.resize(ui.size.width, ui.size.height);
+                    //$('#fsV0 > canvas').css({width: ui.size.width + 'px', height: ui.size.height + 'px'});
+                },
+            });
 
         });
     </script>
 </head>
 <body>
-    <table>
-        <tr>
-            <th>fs0</th>
-            <td id="fs0"></td>
-        </tr>
-        <tr>
-            <th>fs1</th>
-            <td id="fs1"></td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <th>fs2</th>
-            <th>fs3</th>
-        </tr>
-        <tr>
-            <td id="fs2"></td>
-            <td id="fs3"></td>
-        </tr>
-    </table>
+   <div id="fsV0" style="border:solid 1px #111"><canvas></canvas></div></td>
 </body>
 </html>

@@ -43,6 +43,7 @@ var Filmstrip = function(model, args) {
             width: 80,
             height: 400,
             bgColor: '#333',
+            drawBackground: true,
             drawHoles: true,
             holesColor: '#222',
             holesDispersion: .8,
@@ -89,6 +90,15 @@ var Filmstrip = function(model, args) {
     };
 
     this.resize = function(width, height) {
+        if (width == 0 || height == 0) {
+            return;
+        }
+
+        if (this.autoOrientation) {
+            this.orientation = (width > height * 2) ?
+                'horizontal' :  'vertical';
+        }
+
         switch (this.orientation) {
 
             case 'horizontal':
@@ -139,15 +149,6 @@ var Filmstrip = function(model, args) {
 
         }
 
-        if (this.width == 0 || this.height == 0) {
-            return;
-        }
-
-        if (this.autoOrientation) {
-            this.orientation = (this.width > this.height * 2) ?
-                'horizontal' :  'vertical';
-        }
-
         this[this.attrTrans._frameHeight] = (
             this[this.attrTrans.height] - (this.bandsPadding * 2)
         );
@@ -178,8 +179,8 @@ var Filmstrip = function(model, args) {
 
         if (this._maxSteps) {
             this._createTmpCanvas();
+            $(this).trigger('draw:started');
             this.video.currentTime = this.startAt;
-            $(self).trigger('draw:started');
         }
     };
 
@@ -241,15 +242,24 @@ var Filmstrip = function(model, args) {
         this.context.drawImage(canvas, 0, 0);
     };
 
+    this.clearCanvas = function() {
+        this.canvas.width = this.canvas.width;
+        this.canvas.height = this.canvas.height;
+        $(self).trigger('draw:finished');
+    },
+
     this.drawCanvas = function(elem) {
-        var canvas = elem.get(0);
-        canvas.width = this.width;
-        canvas.height = this.height;
-        var context = canvas.getContext('2d');
+        elem.width(this.width);
+        elem.height(this.height);
+        elem.get(0).width = this.width;
+        elem.get(0).height = this.height;
+        var context = elem.get(0).getContext('2d');
         context.drawImage(this.canvas, 0, 0);
     };
 
     this.drawFrame = function(elem, args) {
+        elem.width(this.width);
+        elem.height(this.height);
         var canvas = elem.get(0);
         var context = canvas.getContext('2d');
 
@@ -299,8 +309,10 @@ var Filmstrip = function(model, args) {
     };
 
     this.drawBaseFilmstrip = function(context) {
-        context.fillStyle = this.bgColor;
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        if (this.drawBackground) {
+            context.fillStyle = this.bgColor;
+            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        }
 
         if (this.drawHoles && this.bandsPadding) {
             context.fillStyle = this.holesColor;

@@ -10,6 +10,7 @@
             margin: 20px;
         }
     </style>
+    <script src="http://underscorejs.org/underscore.js"></script>
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="filmstrip.js"></script>
@@ -53,9 +54,16 @@
             });
 
             $('#fs').resizable({
-                resize: function(event, ui) {
+                resize: _.throttle(function(event, ui) {
                     fs.resize(ui.size.width, ui.size.height);
-                },
+                }, 200, {leading: false}),
+            });
+
+            $('#fs').on('resize', function(event, ui) {
+                $('#fs > canvas').css({
+                    width: ui.size.width + 'px',
+                    height: ui.size.height + 'px'
+                });
             });
 
         });

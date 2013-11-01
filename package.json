@@ -1,0 +1,28 @@
+{
+  "name": "filmstrip",
+  "version": "0.0.1",
+  "description": "html5 video preview widget",
+  "main": "filmstrip.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/inaes-tic/filmstrip.git"
+  },
+  "keywords": [
+    "filmstrip",
+    "video",
+    "html5",
+    "preview",
+    "widget"
+  ],
+  "author": "Leonardo Vidarte <leo@opcode.coop>",
+  "license": "AGPLv3",
+  "bugs": {
+    "url": "https://github.com/inaes-tic/filmstrip/issues"
+  }
+}

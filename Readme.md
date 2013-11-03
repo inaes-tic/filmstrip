@@ -6,7 +6,10 @@ weaved by the OpCoode Cooperative http://opcode.coop
 This project like all the Malbec Broadcast projects is released under the 
 AGPL v3 Licence.
 
-Show the video: http://www.youtube.com/watch?v=iOzS8xtnsQo
+Show the videos at Opcode Coop channel:
+
+* http://www.youtube.com/watch?v=ex2nVUNmzeo
+* http://www.youtube.com/watch?v=Yph6Z2rhA_k
 
 Play with the demo http://www.opcode.coop/filmstrip/
 

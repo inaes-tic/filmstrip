@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Filmstrip</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <style type="text/css">
+        body {
+            background-color: #222;
+            margin: 20px;
+        }
+        div.box {
+            border: solid 1px #111;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="http://underscorejs.org/underscore.js"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="filmstrip.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var model = {src: 'http://opcode.coop/filmstrip/elephants_dream_r1.ogv'};
+
+            var width = 1000;
+            var height = 40;
+
+            // Current Time bar
+            var currentTime = $('#currentTime').get(0);
+            var currentTimeCtx = currentTime.getContext('2d');
+            var currentTimeHeight = 1;
+            var currentTimeColor = '#aaa';
+
+            // Zoom canvas
+            var frameCtx = $('#frame').get(0).getContext('2d');
+            var bigFrameCtx = $('#bigFrame').get(0).getContext('2d');
+
+            // Set div dimensions
+            $('#fs').parent().css({
+                width: width + 'px',
+                height: height + 'px'
+            });
+            $('#currentTime').parent().css({
+                width: (width + 2) + 'px',
+                height: currentTimeHeight + 'px'
+            });
+
+            // Filmstrip
+            var fs = new Filmstrip(model, {
+                width: width,
+                height: height,
+                bgColor: '#333',
+                drawBackground: true,
+                bandsPadding: 0,
+                autoOrientation: false,
+                orientation: 'horizontal',
+                strechOnResize: true,
+            });
+
+            fs.load();
+
+            fs.on('loaded', function() {
+                var w = fs.video.videoWidth;
+                var h = fs.video.videoHeight;
+
+                $('#frame').parent().css({
+                    width: w + 'px',
+                    height: h + 'px'
+                });
+                $('#frame').attr({
+                    width: w + 'px',
+                    height: h + 'px'
+                });
+
+                $('#bigFrame').parent().css({
+                    width: (w * 2) + 'px',
+                    height: (h * 2) + 'px'
+                });
+                $('#bigFrame').attr({
+                    width: w + 'px',
+                    height: h + 'px'
+                });
+            });
+
+            fs.on('draw:finished', function() {
+                this.drawCanvas($('#fs'));
+            });
+
+            fs.on('draw:frame', function(event, args) {
+                this.drawFrame($('#fs'), args);
+            });
+
+            /* No trottled
+            $('#fs').parent().resizable({
+                resize: function(event, ui) {
+                    fs.resize(ui.size.width, ui.size.height);
+                },
+            });
+            //*/
+
+            //* Trottled
+            $('#fs').parent().resizable({
+                resize: _.throttle(function(event, ui) {
+                    fs.resize(ui.size.width, ui.size.height);
+                }, 200, {leading: false}),
+            });
+            //*/
+
+            $('#fs').parent().on('resize', function(event, ui) {
+                $('#fs').css({
+                    width: ui.size.width + 'px',
+                    height: ui.size.height + 'px'
+                });
+                $('#currentTime').css({
+                    width: (ui.size.width + 2) + 'px',
+                });
+            });
+
+            /* No throttled
+            $('#fs').on('mousemove', function(e) {
+                var second = fs.getSecondForMousePosition(e.offsetX, e.offsetY);
+                fs.captureFrameAt(second);
+            });
+            //*/
+
+            //* Trottled
+            $('#fs').on('mousemove', _.throttle(function(e) {
+                var second = fs.getSecondForMousePosition(e.offsetX, e.offsetY);
+                fs.captureFrameAt(second);
+            }, 20, {leading: false}));
+            //*/
+
+            $('#fs').on('mousemove', function(e) {
+                currentTime.width = fs.width;
+                currentTime.height = fs.height;
+                currentTimeCtx.clearRect(0, 0, fs.width, currentTimeHeight);
+                currentTimeCtx.fillStyle = currentTimeColor;
+                currentTimeCtx.fillRect(0, 0, e.offsetX, currentTimeHeight);
+            });
+
+            fs.on('frame:captured', function() {
+                frameCtx.drawImage(fs.capture, 0, 0);
+                bigFrameCtx.drawImage(fs.capture, 0, 0);
+                $('#bigFrame').css({
+                    width: (fs.video.videoWidth * 2) + 'px',
+                    height: (fs.video.videoHeight * 2) + 'px'
+                });
+            });
+
+        });
+    </script>
+</head>
+<body>
+   <div class="box"><canvas id="fs"></canvas></div>
+   <div><canvas id="currentTime" style="position:absolute"></canvas></div>
+   <div class="box"><canvas id="frame"></canvas></div>
+   <div class="box"><canvas id="bigFrame"></canvas></div>
+</body>
+</html>

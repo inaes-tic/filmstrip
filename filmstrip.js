@@ -24,6 +24,7 @@ var Filmstrip = function(model, args) {
     this.video = null;
     this.canvas = null;
     this.context = null;
+    this.capture = null;
     this._frameHeight = 0;
     this._frameWidth = 0;
     this._framePadding = 0;
@@ -31,11 +32,15 @@ var Filmstrip = function(model, args) {
     this._step = 0;
     this._maxSteps = 0;
     this._canvasDrawn = false;
+    this._drawing = false;
+    this._capturing = false;
+    this._lastCurrentTime = 0;
 
-    this._createCanvas = function() {
-        return $('<canvas />')
-            .attr({ width: this.width, height: this.height })
-            .get(0);
+    this._createCanvas = function(width, height) {
+        var canvas = document.createElement('canvas');
+        canvas.width = (width !== undefined ? width : this.width);
+        canvas.height = (height !== undefined ? height : this.height);
+        return canvas;
     };
 
     __construct = function(self) {
@@ -76,17 +81,32 @@ var Filmstrip = function(model, args) {
                 $(self).trigger('loaded');
             })
             .bind('seeked', function() {
-                self._drawFrame();
-                if (self._count < self._maxSteps - 1) {
-                    self._count++;
-                    self.video.currentTime += self._step;
+                if (self._capturing) {
+                    self.captureFrame();
+                    self._capturing = false;
+                    $(self).trigger('frame:captured');
+                    if (self._drawing) {
+                        self.setCurrentTime(self._lastCurrentTime);
+                    }
                 } else {
-                    self.setCanvas(self._tmpCanvas);
-                    self._destroyTmpCanvas();
-                    self._canvasDrawn = true;
-                    $(self).trigger('draw:finished');
+                    self._drawFrame();
+                    if (self._count < self._maxSteps - 1) {
+                        self._count++;
+                        self.setCurrentTime(self.video.currentTime + self._step);
+                    } else {
+                        self.setCanvas(self._tmpCanvas);
+                        self._destroyTmpCanvas();
+                        self._canvasDrawn = true;
+                        self._drawing = false;
+                        $(self).trigger('draw:finished');
+                    }
                 }
             });
+    };
+
+    this.setCurrentTime = function(currentTime) {
+        this._lastCurrentTime = this.video.currentTime;
+        this.video.currentTime = currentTime;
     };
 
     this.resize = function(width, height) {
@@ -180,7 +200,8 @@ var Filmstrip = function(model, args) {
         if (this._maxSteps) {
             this._createTmpCanvas();
             $(this).trigger('draw:started');
-            this.video.currentTime = this.startAt;
+            this._drawing = true;
+            this.setCurrentTime(this.startAt);
         }
     };
 
@@ -348,9 +369,34 @@ var Filmstrip = function(model, args) {
                 context.fillRect(_.x0, _.y0, _.width, _.height);
                 context.fillRect(_.x1, _.y1, _.width, _.height);
             }
-
         }
+    };
 
+    this.getSecondForMousePosition = function(x, y) {
+        var _ = {x: x, y: y};
+        return Math.ceil(
+            _[this.attrTrans.x] *
+            this.video.duration /
+            this.canvas[this.attrTrans.width]
+        );
+    };
+
+    this.captureFrameAt = function(seconds) {
+        if (this._capturing == false) {
+            this._capturing = true;
+            this.setCurrentTime(seconds);
+        }
+    };
+
+    this.captureFrame = function() {
+        if (this.capture === null) {
+            this.capture = this._createCanvas(
+                this.video.videoWidth,
+                this.video.videoHeight
+            );
+            this._captureCtx = this.capture.getContext('2d');
+        }
+        this._captureCtx.drawImage(this.video, 0, 0);
     };
 
 };

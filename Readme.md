@@ -65,9 +65,51 @@ filmstrip.on('draw:frame', function(event, args) {
     this.drawFrame($('#filmstrip'), args);
 });
 ```
+
+####Capture frame
+```html
+<canvas id="filmstrip"></canvas>
+<canvas id="frame"></canvas>
+```
+
+```javascript
+filmstrip.on('loaded', function() {
+    $('#frame').css({
+        width: filmstrip.video.videoWidth,
+        height: filmstrip.video.videoHeight
+    });
+});
+
+$('#filmstrip').on('mousemove', function(event) {
+    filmstrip.captureFrameAt(
+        filmstrip.getSecondForMousePosition(
+            event.offsetX,
+            event.offsetY
+        )
+    );
+});
+
+filmstrip.on('frame:captured', function() {
+    var ctx = $('#frame').get(0).getContext('2d');
+    ctx.drawImage(filmstrip.capture, 0, 0);
+});
+```
+
+####Using trottle function on resize (require underscore.js)
+```javascript
+var resize = _.throttle(function(event. ui) {
+    filmstrip.resize(ui.size.width, ui.size.height)
+}, 250, {leading: false});
+```
+
 ####Dependencies
 
 * jQuery
+
+####Use ffmpeg to convert videos for better performance
+```bash
+ffmpeg -i original_video.mkv -s 320x180 -vcodec libx264 -an -r 1 filmstrip_video.mp4
+```
 
 ####Run Example
 

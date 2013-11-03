@@ -381,10 +381,10 @@ var Filmstrip = function(model, args) {
         );
     };
 
-    this.captureFrameAt = function(seconds) {
+    this.captureFrameAt = function(second) {
         if (this._capturing == false) {
             this._capturing = true;
-            this.setCurrentTime(seconds);
+            this.setCurrentTime(second);
         }
     };
 
